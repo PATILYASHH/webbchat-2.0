@@ -1,26 +1,8 @@
-const io = require('socket.io')(3000);
+const socket = io('https://localhost:3000');
 
-const user = {};
+const form = document.getElementById('send-container');
+const messageInput = document.getElementById('messageInp');
+const messageContainer = document.querySelector('.container');
 
-io.on('connection', socket => {
-  // Handle new user joined
-  socket.on('new-user-joined', name => {
-    console.log("new-user", name);
-    user[socket.id] = name;
-    socket.broadcast.emit('user-joined', name);
-  });
-
-  // Handle user sending a message
-  socket.on('send', message => {
-    socket.broadcast.emit('receive', { message: message, name: user[socket.id] });
-  });
-
-  // Handle user disconnect
-  socket.on('disconnect', () => {
-    const name = user[socket.id];
-    delete user[socket.id];
-    if (name) {
-      socket.broadcast.emit('user-left', name);
-    }
-  });
-});
+const name = prompt("Enter your name to join");
+  socket.emit('new-user-joined', window.name);
